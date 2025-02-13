@@ -1,3 +1,7 @@
+# Fixing global variable warnings
+utils::globalVariables(c("parent_1", "parent_2", "individual", "cross", "group_key",
+                         "marker", "map_position", "dosage", "."))
+
 #' Build a Multiparental Dosage Data Frame from Cross Results and Pedigree
 #'
 #' This function processes cross results and pedigree information to create a wide-format dosage data frame.
@@ -18,6 +22,7 @@
 #'
 #' @import dplyr
 #' @import tidyr
+#' @importFrom stats setNames
 #'
 #' @examples
 #' \dontrun{
@@ -37,7 +42,7 @@ build_multiparental_dosage <- function(cross.results, pedigree) {
   # Create a split list by grouping individuals.
   list.of.parents.and.biaparentals <- cross.results %>%
     # Add a dosage column that sums all homolog columns
-    mutate(dosage = rowSums(select(., starts_with("Homolog_")), na.rm = TRUE),
+    mutate(dosage = rowSums(across(starts_with("Homolog_")), na.rm = TRUE),
            # Create a grouping key: if cross is NA, use individual; otherwise, use cross.
            group_key = if_else(is.na(cross), as.character(individual), cross)) %>%
     group_by(group_key) %>%

@@ -62,6 +62,7 @@ compare_matrices <- function(matrix1, matrix2) {
 #' @export
 #' @importFrom reshape2 melt
 #' @importFrom ggplot2 ggplot aes geom_tile scale_fill_manual labs theme_minimal theme element_text
+#'
 plot_difference_matrix <- function(matrix1, matrix2) {
   # Get common rows by row names
   row.id <- intersect(rownames(matrix1), rownames(matrix2))
@@ -90,3 +91,6 @@ plot_difference_matrix <- function(matrix1, matrix2) {
     ggplot2::theme_minimal() +
     ggplot2::theme(axis.text.y = ggplot2::element_text(angle = 90, hjust = 1))
 }
+
+utils::globalVariables(c("Row", "Column", "Status", "Marker", "Haplotype", "Value", "Chrom"))
+

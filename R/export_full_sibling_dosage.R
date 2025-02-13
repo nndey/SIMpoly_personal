@@ -20,7 +20,7 @@
 #'
 #' # Export the dosage data
 #' export_full_sibling_dosage(dosage_matrix, full_sibs, file_path = tempdir())
-#'
+#' @import utils
 #' @export
 export_full_sibling_dosage <- function(dosage_matrix, full_sibling_groups, file_path = NULL) {
 

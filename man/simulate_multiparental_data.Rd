@@ -10,54 +10,63 @@ simulate_multiparental_data(
   pedigree,
   ploidy.vec,
   n_mrk,
-  alleles
+  alleles,
+  p = 0.3,
+  rho = 0.1
 )
 }
 \arguments{
-\item{n.chr}{Integer specifying the number of chromosomes to simulate.}
+\item{n.chr}{Integer. Number of chromosomes to simulate.}
 
-\item{map.len}{Numeric vector specifying the map length for each chromosome. Its length must equal \code{n.chr}.}
+\item{map.len}{Numeric vector of length \code{n.chr}. Specifies the map length for each chromosome.}
 
-\item{pedigree}{A data frame containing pedigree information. It must include at least the columns
-\code{parent_1}, \code{parent_2}, \code{individual} and (for offspring) a \code{cross} identifier.
-Founders are identified by having \code{NA} in both \code{parent_1} and \code{parent_2}.}
+\item{pedigree}{Data frame. Must contain at least the columns \code{parent_1}, \code{parent_2},
+\code{individual}, and \code{cross}. Founders are identified by \code{NA} in both parental columns.}
 
-\item{ploidy.vec}{Numeric vector specifying the ploidy for each founder. The names of the vector
-should correspond to founder IDs in the pedigree.}
+\item{ploidy.vec}{Named numeric vector. Specifies the ploidy level for each founder.
+Names should correspond to founder IDs in \code{pedigree}.}
 
-\item{n_mrk}{Integer specifying the number of markers to simulate per chromosome.}
+\item{n_mrk}{Integer vector. Specifies the number of markers per chromosome.}
 
-\item{alleles}{A list of allele codes for the founders (e.g. \code{list(P1 = 0:1, P2 = 0:1, ...)}).}
+\item{alleles}{List. Contains allele codes for the founders (e.g., \code{list(P1 = 0:1, P2 = 0:1, ...)}).}
+
+\item{p}{Numeric. Probability of an element being in each biparental cross when generating correlated sets.
+Default is \code{0.3}.}
+
+\item{rho}{Numeric. Correlation parameter for set overlap when generating correlated biparental crosses.
+Higher values increase overlap. Default is \code{0.1}.}
 }
 \value{
-A list with two elements:
+A list with the following components:
 \describe{
-\item{\code{wide_df}}{A wide-format data frame combining dosage data from all chromosomes.
-Rows correspond to markers (with a \code{Chrom} column) and columns contain dosage values for individuals.
-The marker names are modified to indicate the chromosome.}
-\item{\code{dat}}{A named list of data frames, one per biparental cross, each containing:
-\code{snp_id} (the marker name), the dosage for the two parents (\code{P1} and \code{P2}),
+\item{\code{wide_df}}{Wide-format data frame containing dosage data from all chromosomes.
+Rows correspond to markers (with a \code{Chrom} column) and columns contain dosage
+values for individuals. Marker names indicate the chromosome.}
+\item{\code{dat}}{Named list of data frames, one per biparental cross, each containing:
+\code{snp_id} (marker name), dosage for the two parents (\code{P1} and \code{P2}),
 \code{chrom}, \code{genome_pos}, two variant allele columns (\code{alt} and \code{res}),
-and the dosage columns for the offspring in that cross.}
+and the dosage columns for offspring in that cross.}
+\item{\code{parent_homologs}}{List of founder haplotype simulations for each chromosome.}
+\item{\code{counts}}{Named numeric vector of set intersections (formatted for Euler diagrams).}
 }
 }
 \description{
-This function simulates multiparental dosage data across multiple chromosomes.
-For each chromosome, it simulates founder haplotypes, generates offspring data,
-structures the results into a wide-format data frame (with an added chromosome identifier),
-and then assembles a list of data frames for biparental crosses enriched with variant allele
-information.
+Simulates multiparental dosage data across multiple chromosomes.
+It generates founder haplotypes, simulates offspring, structures the results
+into a wide-format data frame, and extracts biparental cross data enriched
+with variant allele information.
 }
 \examples{
 \dontrun{
-  # Example usage (assuming required helper functions exist):
   result <- simulate_multiparental_data(
     n.chr = 3,
     map.len = c(100, 120, 90),
     pedigree = my_pedigree,
     ploidy.vec = c(P1 = 4, P2 = 2, P3 = 4, P4 = 2, P5 = 4, P6 = 4),
-    n_mrk = 200,
-    alleles = list(P1 = 0:1, P2 = 0:1, P3 = 0:1, P4 = 0:1, P5 = 0:1, P6 = 0:1)
+    n_mrk = c(200, 250, 180),
+    alleles = list(P1 = 0:1, P2 = 0:1, P3 = 0:1, P4 = 0:1, P5 = 0:1, P6 = 0:1),
+    p = 0.3,
+    rho = 0.2
   )
   wide_df <- result$wide_df
   dat <- result$dat

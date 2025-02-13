@@ -35,5 +35,4 @@ full_sibs <- list("Group1" = c("Ind1", "Ind2", "Ind3"), "Group2" = c("Ind4", "In
 
 # Export the dosage data
 export_full_sibling_dosage(dosage_matrix, full_sibs, file_path = tempdir())
-
 }

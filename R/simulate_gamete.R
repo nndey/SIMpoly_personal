@@ -16,6 +16,7 @@
 #'     \item{homology.group}{The original homology group used in the simulation.}
 #'   }
 #' @export
+#' @importFrom stats runif dpois median
 simulate_gamete <- function(homology.group, n.ind, cm.map, prob = NULL, seed = NULL) {
   ploidy <- ncol(homology.group)
   n.mrk <- nrow(homology.group)
