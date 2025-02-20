@@ -10,45 +10,45 @@ library(knitr)
 #  library(SIMpoly)
 #  library(mappoly2)  # for consensus mapping
 
-## ----define-pedigree----------------------------------------------------------
-#  # Define ploidy for each parent.
-#  ploidy.vec <- c(4, 2, 4, 2, 4, 4)  # for six parents
-#  names(ploidy.vec) <- c("P1", "P2", "P3", "P4", "P5", "P6")
-#  
-#  # Define parental crosses.
-#  parents.mat <- matrix(c("P1", "P2",
-#                          "P1", "P3",
-#                          "P2", "P2",
-#                          "P3", "P4",
-#                          "P4", "P5",
-#                          "P5", "P6",
-#                          "P5", "P2"),
-#                        ncol = 2, byrow = TRUE)
-#  
-#  # Define number of offspring per cross.
-#  n_offspring <- c(200, 100, 200, 100, 300, 200, 100)
-#  
-#  # Define allele set for each founder.
-#  alleles <- list(P1 = 0:1, P2 = 0:1, P3 = 0:1, P4 = 0:1, P5 = 0:1, P6 = 0:1)
-#  
-#  # Generate pedigree.
-#  pedigree <- simulate_pedigree(ploidy.vec, parents.mat, n_offspring)
-#  head(pedigree, n = 10)
+## ----define-pedigree, eval=TRUE-----------------------------------------------
+# Define ploidy for each parent.
+ploidy.vec <- c(4, 2, 4, 2, 4, 4)  # for six parents
+names(ploidy.vec) <- c("P1", "P2", "P3", "P4", "P5", "P6")
 
-## ----simulate-data------------------------------------------------------------
-#  n.chr <- 3  # Number of chromosomes
-#  map.len <- c(100, 120, 90)  # Chromosome lengths
-#  n_mrk <- c(2000, 1500, 2000)  # Number of markers per chromosome
-#  
-#  # Simulate genetic data
-#  result <- simulate_multiparental_data(n.chr, map.len, pedigree, ploidy.vec, n_mrk, alleles, p = .3 , rho = .7)
-#  
-#  # Extract results
-#  wide_df <- result$wide_df
-#  all_dat <- result$dat
-#  parent_homologs <- result$parent_homologs[[1]]
-#  plot_parent_phase_gg(parent_homologs)
-#  plot_correlated_sets(result$counts)
+# Define parental crosses.
+parents.mat <- matrix(c("P1", "P2",
+                        "P1", "P3",
+                        "P2", "P2",
+                        "P3", "P4",
+                        "P4", "P5",
+                        "P5", "P6",
+                        "P5", "P2"),
+                      ncol = 2, byrow = TRUE)
+
+# Define number of offspring per cross.
+n_offspring <- c(200, 100, 200, 100, 300, 200, 100)
+
+# Define allele set for each founder.
+alleles <- list(P1 = 0:1, P2 = 0:1, P3 = 0:1, P4 = 0:1, P5 = 0:1, P6 = 0:1)
+
+# Generate pedigree.
+pedigree <- simulate_pedigree(ploidy.vec, parents.mat, n_offspring)
+head(pedigree, n = 10)
+
+## ----simulate-data, eval=TRUE-------------------------------------------------
+n.chr <- 3  # Number of chromosomes
+map.len <- c(100, 120, 90)  # Chromosome lengths
+n_mrk <- c(2000, 1500, 2000)  # Number of markers per chromosome
+
+# Simulate genetic data
+result <- simulate_multiparental_data(n.chr, map.len, pedigree, ploidy.vec, n_mrk, alleles, p = .3 , rho = .7)
+
+# Extract results
+wide_df <- result$wide_df
+all_dat <- result$dat
+parent_homologs <- result$parent_homologs[[1]]
+plot_parent_phase_gg(parent_homologs)
+plot_correlated_sets(result$counts)
 
 ## ----build-maps---------------------------------------------------------------
 #  MAPs <- vector("list", nrow(parents.mat))

@@ -1,6 +1,6 @@
 ---
 title: "Simulating Multiparental Populations and Constructing a Consensus Map"
-author: "Your Name"
+author: "Marcelo Mollinari"
 date: "`r Sys.Date()`"
 output:
   html_document:
@@ -37,7 +37,7 @@ This vignette demonstrates how to use **SIMpoly** to simulate multiple biparenta
 
 # Step 1: Installing and Loading Packages
 
-```{r install-packages}
+```{r install-packages, eval=TRUE}
 library(SIMpoly)
 library(mappoly2)  # for consensus mapping
 ```
@@ -46,7 +46,7 @@ library(mappoly2)  # for consensus mapping
 
 # Step 2: Define Simulation Parameters and Pedigree
 
-```{r define-pedigree}
+```{r define-pedigree, eval=TRUE}
 # Define ploidy for each parent.
 ploidy.vec <- c(4, 2, 4, 2, 4, 4)  # for six parents
 names(ploidy.vec) <- c("P1", "P2", "P3", "P4", "P5", "P6")
@@ -76,13 +76,13 @@ head(pedigree, n = 10)
 
 # Step 3: Simulate Multiparental Data
 
-```{r simulate-data}
+```{r simulate-data, eval=TRUE}
 n.chr <- 3  # Number of chromosomes
 map.len <- c(100, 120, 90)  # Chromosome lengths
 n_mrk <- c(2000, 1500, 2000)  # Number of markers per chromosome
 
 # Simulate genetic data
-result <- simulate_multiparental_data(n.chr, map.len, pedigree, ploidy.vec, n_mrk, alleles, p = .3 , rho = .7)
+result <- simulate_multiparental_data(n.chr, map.len, pedigree, ploidy.vec, n_mrk, alleles,  missing = 0.1, p = .3 , rho = .7)
 
 # Extract results
 wide_df <- result$wide_df

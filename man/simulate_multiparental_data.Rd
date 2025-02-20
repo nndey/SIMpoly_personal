@@ -11,6 +11,7 @@ simulate_multiparental_data(
   ploidy.vec,
   n_mrk,
   alleles,
+  missing = 0,
   p = 0.3,
   rho = 0.1
 )
@@ -29,6 +30,9 @@ Names should correspond to founder IDs in \code{pedigree}.}
 \item{n_mrk}{Integer vector. Specifies the number of markers per chromosome.}
 
 \item{alleles}{List. Contains allele codes for the founders (e.g., \code{list(P1 = 0:1, P2 = 0:1, ...)}).}
+
+\item{missing}{Numeric. Proportion of missing data to introduce. Must be in the range \code{[0.0, 1.0)}.
+Default is \code{0.0} (no missing data).}
 
 \item{p}{Numeric. Probability of an element being in each biparental cross when generating correlated sets.
 Default is \code{0.3}.}
@@ -65,6 +69,7 @@ with variant allele information.
     ploidy.vec = c(P1 = 4, P2 = 2, P3 = 4, P4 = 2, P5 = 4, P6 = 4),
     n_mrk = c(200, 250, 180),
     alleles = list(P1 = 0:1, P2 = 0:1, P3 = 0:1, P4 = 0:1, P5 = 0:1, P6 = 0:1),
+    missing = 0.05,
     p = 0.3,
     rho = 0.2
   )

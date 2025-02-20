@@ -13,6 +13,8 @@
 #'   Names should correspond to founder IDs in \code{pedigree}.
 #' @param n_mrk Integer vector. Specifies the number of markers per chromosome.
 #' @param alleles List. Contains allele codes for the founders (e.g., \code{list(P1 = 0:1, P2 = 0:1, ...)}).
+#' @param missing Numeric. Proportion of missing data to introduce. Must be in the range \code{[0.0, 1.0)}.
+#'   Default is \code{0.0} (no missing data).
 #' @param p Numeric. Probability of an element being in each biparental cross when generating correlated sets.
 #'   Default is \code{0.3}.
 #' @param rho Numeric. Correlation parameter for set overlap when generating correlated biparental crosses.
@@ -44,6 +46,7 @@
 #'     ploidy.vec = c(P1 = 4, P2 = 2, P3 = 4, P4 = 2, P5 = 4, P6 = 4),
 #'     n_mrk = c(200, 250, 180),
 #'     alleles = list(P1 = 0:1, P2 = 0:1, P3 = 0:1, P4 = 0:1, P5 = 0:1, P6 = 0:1),
+#'     missing = 0.05,
 #'     p = 0.3,
 #'     rho = 0.2
 #'   )
@@ -58,11 +61,12 @@ simulate_multiparental_data <- function(n.chr,
                                         ploidy.vec,
                                         n_mrk,
                                         alleles,
+                                        missing = 0.0,
                                         p = 0.3,
                                         rho = 0.1) {
   wide_df <- tibble()
   parent_homologs <- vector("list", n.chr)
-
+  stopifnot("'missing' must be in [0.0, 1.0)." = missing >= 0.0 & missing < 1.0)
   for (i in seq_len(n.chr)) {
     set.seed(i)  # Ensure reproducibility
 
@@ -116,7 +120,14 @@ simulate_multiparental_data <- function(n.chr,
     # Get offspring individual names for each biparental cross
     offspring_names <- pedigree$individual[pedigree$cross == biparental_crosses[i]]
     marker_indices <- which(correlated_sets$membership_matrix[, i])
+    geno.temp <- wide_df[marker_indices, offspring_names, drop = FALSE]
+    geno <- as.matrix(geno.temp)
 
+    if(missing > 0.0){
+      id <- sample(length(geno), size = length(geno) * missing)
+      geno[id] <- NA
+    }
+    colnames(geno) <- colnames(geno.temp)
     dat[[i]] <- data.frame(
       snp_id     = wide_df$marker[marker_indices],
       P1         = wide_df[[P1s[i]]][marker_indices],
@@ -125,7 +136,7 @@ simulate_multiparental_data <- function(n.chr,
       genome_pos = wide_df$map_position[marker_indices],
       alt        = variant[1, ][marker_indices],
       res        = variant[2, ][marker_indices],
-      wide_df[marker_indices, offspring_names, drop = FALSE],
+      geno,
       check.names = FALSE,
       stringsAsFactors = FALSE
     )
