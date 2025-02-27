@@ -1,7 +1,4 @@
 ---
-
-&#x20;&#x20;
-
 # **SIMpoly - Simulation of Genetic Marker Data in Pedigreed Populations**
 
 ### *Marcelo Mollinari*
@@ -127,8 +124,6 @@ plot_map(MAPs[[1]], lg = 1, type = "genome")
 ## 🏆 **Acknowledgment**
 
 This package has been developed as part of the project [AFRI-Grant: A Genetics-Based Data Analysis System for Breeders in Polyploid Breeding Programs](https://portal.nifa.usda.gov/web/crisprojectpages/1027948-a-genetics-based-data-analysis-system-for-breeders-in-polyploid-breeding-programs.html) funded by USDA NIFA.
-
-&#x20;
 
 NC State University promotes equal opportunity and prohibits discrimination and harassment based on various protected characteristics.
 
