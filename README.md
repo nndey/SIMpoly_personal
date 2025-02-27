@@ -1,5 +1,3 @@
----
-
 &#x20;&#x20;
 
 # **SIMpoly - Simulation of Genetic Marker Data in Pedigreed Populations**
