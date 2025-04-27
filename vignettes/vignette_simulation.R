@@ -7,12 +7,12 @@ knitr::opts_chunk$set(
 library(knitr)
 
 ## ----install-packages---------------------------------------------------------
-#  library(SIMpoly)
-#  library(mappoly2)  # for consensus mapping
+library(SIMpoly)
+library(mappoly2)  # for consensus mapping
 
 ## ----define-pedigree, eval=TRUE-----------------------------------------------
 # Define ploidy for each parent.
-ploidy.vec <- c(4, 2, 4, 2, 4, 4)  # for six parents
+ploidy.vec <- c(4, 4, 4, 4, 4, 4)  # for six parents
 names(ploidy.vec) <- c("P1", "P2", "P3", "P4", "P5", "P6")
 
 # Define parental crosses.
@@ -26,7 +26,7 @@ parents.mat <- matrix(c("P1", "P2",
                       ncol = 2, byrow = TRUE)
 
 # Define number of offspring per cross.
-n_offspring <- c(200, 100, 200, 100, 300, 200, 100)
+n_offspring <- c(30, 30, 30, 30, 30, 30, 30)
 
 # Define allele set for each founder.
 alleles <- list(P1 = 0:1, P2 = 0:1, P3 = 0:1, P4 = 0:1, P5 = 0:1, P6 = 0:1)
@@ -38,13 +38,13 @@ head(pedigree, n = 10)
 ## ----simulate-data, eval=TRUE-------------------------------------------------
 n.chr <- 3  # Number of chromosomes
 map.len <- c(100, 120, 90)  # Chromosome lengths
-n_mrk <- c(2000, 1500, 2000)  # Number of markers per chromosome
+n_mrk <- c(400, 400, 400)  # Number of markers per chromosome
 
 # Simulate genetic data
 result <- simulate_multiparental_data(n.chr, map.len, pedigree,
                                       ploidy.vec, n_mrk, alleles,
                                       p = .3 , rho = .7,
-                                      missing = 0.1)
+                                      missing = 0.0)
 
 # Extract results
 wide_df <- result$wide_df
@@ -62,8 +62,8 @@ plot_correlated_sets(result$counts)
    dat <- mappoly2:::table_to_mappoly(all_dat[[i]], ploidy.vec[p1], ploidy.vec[p2], p1, p2)
 
    # Filtering steps
-   dat <- filter_markers_by_chisq_pval(dat, plot = FALSE)
-   dat <- filter_markers_by_missing_rate(dat, mrk.thresh = .1, plot = FALSE)
+   dat <- filter_markers_by_chisq_pval(dat)
+   dat <- filter_markers_by_missing_rate(dat, mrk.thresh = .1)
    dat <- filter_individuals_by_missing_rate(dat, ind.thresh = .1, plot = FALSE)
    dat <- pairwise_rf(dat, mrk.scope = "all", ncpus = 8)
    plot(dat, type = "screened")
@@ -75,7 +75,16 @@ plot_correlated_sets(result$counts)
    plot(g)
    s <- make_sequence(g, ch = list(1,2,3))
    s <- order_sequence(s, type = "genome")
-   s <- pairwise_phasing(s, type = "genome", parent = "p1p2")
+   ####
+   s <- pairwise_phasing(s, type = "genome", parent = "p1p2",
+                         thresh.LOD.ph = 1,
+                         max.search.expansion.p1 = 40,
+                         max.search.expansion.p2 = 40,
+                         phase_LOD_threshold = 10,
+                         tail_map_expansion = 10,
+                         tail = 30,
+
+                         error = 0.05)
    s <- mapping(s, type = "genome", parent = "p1p2", ncpus = n.chr)
    s <- calc_haplotypes(s, type = "genome", ncpus = n.chr)
 
