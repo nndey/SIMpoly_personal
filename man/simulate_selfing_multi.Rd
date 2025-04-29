@@ -2,45 +2,46 @@
 % Please edit documentation in R/simulate_selfing_multi.R
 \name{simulate_selfing_multi}
 \alias{simulate_selfing_multi}
-\title{Simulate multiple selfing‐derived recombinant inbred populations}
+\title{Simulate genotype formation and crossover counts over multiple generations}
 \usage{
 simulate_selfing_multi(
-  n_markers,
-  map_length_cm,
-  n_individuals,
-  generations = c(2, 6)
+  n.mrk = 20,
+  map.len = 100,
+  n.ind = 2000,
+  F.generations = 2,
+  plot = TRUE,
+  sleep = 0.5
 )
 }
 \arguments{
-\item{n_markers}{Integer ≥ 2; number of equally spaced markers per chromosome.}
+\item{n.mrk}{Integer. Number of markers (loci) per chromosome. Default: 20.}
 
-\item{map_length_cm}{Numeric > 0; total genetic map length in centiMorgans.}
+\item{map.len}{Numeric. Total map length in centimorgans. Default: 100.}
 
-\item{n_individuals}{Integer ≥ 1; individuals per generation.}
+\item{n.ind}{Integer. Number of individuals in the population. Default: 2000.}
 
-\item{generations}{Integer vector ≥ 2; generations to simulate and return (e.g. c(2,6)).}
+\item{F.generations}{Integer ≥ 2. Number of generations to simulate (F1 → F2 … → F\{F.generations\}). Default: 2.}
+
+\item{plot}{Logical. If TRUE, calls \code{print_geno()} to plot each generation’s heatmap. Default: TRUE.}
+
+\item{sleep}{Numeric. Seconds to pause between plots. Default: 0.5.}
 }
 \value{
-A list with two elements:
-\itemize{
-\item \code{genotypes}: named list of data.frames of dosage genotypes (0/1/2) for each generation.
-\item \code{rec_counts}: named list of integer vectors (length = markers - 1) of total historical crossovers
-observed between each adjacent marker in that generation.
+A list with components:
+\describe{
+\item{geno}{List of data.frames, one per generation from F2 to F\{F.generations\}. Each has rows = individuals and columns = “F_gen” plus marker sums.}
+\item{map}{Numeric vector of marker positions (length = \code{n.mrk}), equally spaced from 0 to \code{map.len}.}
+\item{count.CO}{List of numeric vectors (length = \code{n.mrk}-1), giving counts of crossovers between adjacent markers for each generation.}
 }
 }
 \description{
-From two inbred founders (all-1 vs all-0), simulate an F₂ via Poisson crossovers
-and then advance by selfing to arbitrary generations.  Return both genotype dosages
-and the historical counts of crossovers between adjacent markers for each generation.
+Simulates a population of diploid individuals undergoing repeated selfing.
+At each meiosis, crossovers are placed according to a Poisson process along
+a linear genetic map. Returns per-generation genotype sums and crossover counts.
 }
 \examples{
-res <- simulate_selfing_multi(
-  n_markers = 50,
-  map_length_cm = 100,
-  n_individuals = 20000,
-  generations = c(2,6)
-)
-round(res$rec_counts$F2/(2*20000),3)
-res$genotypes$F2     # genotype DF for F2
-res$rec_counts$F2    # crossover counts between markers in F2
+\dontrun{
+  res <- simulate_selfing_multi(n.mrk = 10, map.len = 50, n.ind = 100, F.generations = 4, plot = FALSE)
+  str(res)
+}
 }

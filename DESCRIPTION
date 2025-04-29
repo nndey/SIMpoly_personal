@@ -18,7 +18,9 @@ Imports:
     stringr,
     mvtnorm,
     eulerr,
-    utils
+    utils,
+    tibble,
+    patchwork
 Suggests: testthat (>= 3.0.0), roxygen2, devtools, knitr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
