@@ -3,14 +3,6 @@
 using namespace Rcpp;
 // [[Rcpp::plugins(cpp11)]]
 
-// [[Rcpp::export]]
-double imf_haldane_cM(double r) {
-  if (R_IsNA(r) || r < 0 || r > 0.5) {
-    stop("Input recombination fractions must be between 0 and 0.5");
-  }
-  return -50.0 * log(1 - 2 * r);
-}
-
 // Helper: switch chromatids at breakpoint bp
 NumericMatrix switch_chrom(const NumericMatrix& G, int bp) {
   int ncol = G.ncol();

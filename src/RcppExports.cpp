@@ -10,17 +10,6 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// imf_haldane_cM
-double imf_haldane_cM(double r);
-RcppExport SEXP _SIMpoly_imf_haldane_cM(SEXP rSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type r(rSEXP);
-    rcpp_result_gen = Rcpp::wrap(imf_haldane_cM(r));
-    return rcpp_result_gen;
-END_RCPP
-}
 // simulate_selfing_multi_rcpp
 List simulate_selfing_multi_rcpp(int n_mrk, double map_len, int n_ind, int F_generations);
 RcppExport SEXP _SIMpoly_simulate_selfing_multi_rcpp(SEXP n_mrkSEXP, SEXP map_lenSEXP, SEXP n_indSEXP, SEXP F_generationsSEXP) {
@@ -37,7 +26,6 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_SIMpoly_imf_haldane_cM", (DL_FUNC) &_SIMpoly_imf_haldane_cM, 1},
     {"_SIMpoly_simulate_selfing_multi_rcpp", (DL_FUNC) &_SIMpoly_simulate_selfing_multi_rcpp, 4},
     {NULL, NULL, 0}
 };
