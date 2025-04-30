@@ -8,9 +8,7 @@ simulate_selfing_multi(
   n.mrk = 20,
   map.len = 100,
   n.ind = 2000,
-  F.generations = 2,
-  plot = TRUE,
-  sleep = 0.5
+  F.generations = 2
 )
 }
 \arguments{
@@ -21,10 +19,6 @@ simulate_selfing_multi(
 \item{n.ind}{Integer. Number of individuals in the population. Default: 2000.}
 
 \item{F.generations}{Integer ≥ 2. Number of generations to simulate (F1 → F2 … → F\{F.generations\}). Default: 2.}
-
-\item{plot}{Logical. If TRUE, calls \code{print_geno()} to plot each generation’s heatmap. Default: TRUE.}
-
-\item{sleep}{Numeric. Seconds to pause between plots. Default: 0.5.}
 }
 \value{
 A list with components:

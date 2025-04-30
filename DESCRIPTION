@@ -10,6 +10,7 @@ Encoding: UTF-8
 LazyData: true
 Depends: R (>= 4.0)
 Imports: 
+    Rcpp,
     gtools,
     reshape2,
     ggplot2,
@@ -21,6 +22,7 @@ Imports:
     utils,
     tibble,
     patchwork
+LinkingTo: Rcpp
 Suggests: testthat (>= 3.0.0), roxygen2, devtools, knitr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
