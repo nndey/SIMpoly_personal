@@ -13,7 +13,8 @@ simulate_multiparental_data(
   alleles,
   missing = 0,
   p = 0.3,
-  rho = 0.1
+  rho = 0.1,
+  seed = NULL
 )
 }
 \arguments{
@@ -39,6 +40,8 @@ Default is \code{0.3}.}
 
 \item{rho}{Numeric. Correlation parameter for set overlap when generating correlated biparental crosses.
 Higher values increase overlap. Default is \code{0.1}.}
+
+\item{seed}{Numeric: Optional seed for reproducibility.}
 }
 \value{
 A list with the following components:

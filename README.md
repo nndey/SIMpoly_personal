@@ -68,7 +68,7 @@ consensus genetic map. The workflow includes:
     n_mrk <- c(2000, 1500, 2000)  # Number of markers per chromosome
 
     # Simulate genetic data
-    result <- simulate_multiparental_data(n.chr, map.len, pedigree, ploidy.vec, n_mrk, alleles,  missing = 0.1, p = .3 , rho = .7)
+    result <- simulate_multiparental_data(n.chr, map.len, pedigree, ploidy.vec, n_mrk, alleles,  missing = 0.1, p = .3 , rho = .7, seed = 1)
 
     # Extract results
     wide_df <- result$wide_df

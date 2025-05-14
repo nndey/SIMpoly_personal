@@ -19,6 +19,7 @@
 #'   Default is \code{0.3}.
 #' @param rho Numeric. Correlation parameter for set overlap when generating correlated biparental crosses.
 #'   Higher values increase overlap. Default is \code{0.1}.
+#' @param seed Numeric: Optional seed for reproducibility.
 #'
 #' @return A list with the following components:
 #' \describe{
@@ -63,12 +64,13 @@ simulate_multiparental_data <- function(n.chr,
                                         alleles,
                                         missing = 0.0,
                                         p = 0.3,
-                                        rho = 0.1) {
+                                        rho = 0.1,
+                                        seed = NULL) {
+  if (!is.null(seed)) set.seed(seed)
   wide_df <- tibble()
   parent_homologs <- vector("list", n.chr)
   stopifnot("'missing' must be in [0.0, 1.0)." = missing >= 0.0 & missing < 1.0)
   for (i in seq_len(n.chr)) {
-    set.seed(i)  # Ensure reproducibility
 
     # Simulate founder haplotypes
     parent_homologs[[i]] <- simulate_founders(pedigree, ploidy.vec, n_mrk[i], alleles)
@@ -84,17 +86,20 @@ simulate_multiparental_data <- function(n.chr,
     )
 
     # Build chromosome-specific dosage data
+
     chr_df <- build_multiparental_dosage(cross_results, pedigree) %>%
       mutate(Chrom = paste0("Ch_", i)) %>%
       relocate(Chrom, .after = marker) %>%
       mutate(marker = paste0(marker, "_", str_replace(Chrom, "_", "")))
 
+    snp_alleles <- simulate_snp_alleles(n = nrow(chr_df))
+    chr_df <- chr_df %>%
+      bind_cols(snp_alleles) %>%
+      relocate(ref, alt, .after = position)
+
     # Append chromosome-specific data to consolidated wide_df
     wide_df <- bind_rows(wide_df, chr_df)
   }
-
-  # Create a matrix of variant alleles
-  variant <- sapply(1:nrow(wide_df), function(x) sample(c("A", "T", "C", "G"), 2))
 
   # Identify biparental crosses
   biparental_idx <- apply(pedigree[, 1:2], 1, function(x) !any(is.na(x)))
@@ -133,9 +138,9 @@ simulate_multiparental_data <- function(n.chr,
       P1         = wide_df[[P1s[i]]][marker_indices],
       P2         = wide_df[[P2s[i]]][marker_indices],
       chrom      = wide_df$Chrom[marker_indices],
-      genome_pos = wide_df$map_position[marker_indices],
-      alt        = variant[1, ][marker_indices],
-      res        = variant[2, ][marker_indices],
+      genome_pos = wide_df$position[marker_indices],
+      ref        = wide_df$ref[marker_indices],
+      alt        = wide_df$alt[marker_indices],
       geno,
       check.names = FALSE,
       stringsAsFactors = FALSE

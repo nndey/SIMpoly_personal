@@ -1,6 +1,6 @@
 # Fixing global variable warnings
 utils::globalVariables(c("parent_1", "parent_2", "individual", "cross", "group_key",
-                         "marker", "map_position", "dosage", "."))
+                         "marker", "position", "dosage", "."))
 
 #' Build a Multiparental Dosage Data Frame from Cross Results and Pedigree
 #'
@@ -12,12 +12,12 @@ utils::globalVariables(c("parent_1", "parent_2", "individual", "cross", "group_k
 #' parents in the pedigree) appear first.
 #'
 #' @param cross.results A data frame containing cross results. It must include at least the following columns:
-#'   `parent_1`, `parent_2`, `individual`, `marker`, `map_position`, and homolog columns starting with `"Homolog_"`.
+#'   `parent_1`, `parent_2`, `individual`, `marker`, `position`, and homolog columns starting with `"Homolog_"`.
 #' @param pedigree A data frame containing pedigree information with columns `parent_1`, `parent_2`, and `individual`.
 #'   Individuals with `NA` for both `parent_1` and `parent_2` are considered parents.
 #'
 #' @return A wide-format data frame with markers as rows and dosage values as columns.
-#'   The first columns are `marker` and `map_position`, followed by the parental dosage columns, and then the remaining individuals.
+#'   The first columns are `marker` and `position`, followed by the parental dosage columns, and then the remaining individuals.
 #'   Missing dosage values are represented as `NA`.
 #'
 #' @import dplyr
@@ -58,26 +58,26 @@ build_multiparental_dosage <- function(cross.results, pedigree) {
 
   # 1. Create a master (union) list of markers and their map positions from all tibbles.
   markers_union <- bind_rows(lapply(list.of.parents.and.biaparentals, function(df) {
-    df %>% select(marker, map_position)
-  })) %>% distinct(marker, map_position)
+    df %>% select(marker, position)
+  })) %>% distinct(marker, position)
 
-  # 2. Extract dosage information (marker, map_position, individual, dosage) from every tibble.
+  # 2. Extract dosage information (marker, position, individual, dosage) from every tibble.
   all_dosage <- bind_rows(lapply(list.of.parents.and.biaparentals, function(df) {
-    df %>% select(marker, map_position, individual, dosage)
+    df %>% select(marker, position, individual, dosage)
   }))
 
   # 3. Join the master marker list with the dosage data to ensure every marker is represented.
   combined <- markers_union %>%
-    full_join(all_dosage, by = c("marker", "map_position"))
+    full_join(all_dosage, by = c("marker", "position"))
 
   # 4. Pivot to wide format so that each unique individual becomes a column.
   wide_dosage <- combined %>%
     pivot_wider(
-      id_cols = c(marker, map_position),  # each row is a unique marker
+      id_cols = c(marker, position),  # each row is a unique marker
       names_from = individual,            # create one column per individual
       values_from = dosage                # fill in the dosage values
     ) %>%
-    arrange(map_position)
+    arrange(position)
 
   ### Part 2: Reorder Columns to Place Parents First
 
@@ -87,7 +87,7 @@ build_multiparental_dosage <- function(cross.results, pedigree) {
     pull(individual)
 
   # Identify all individual dosage columns present in wide_dosage (excluding the marker info columns).
-  all_indivs <- setdiff(colnames(wide_dosage), c("marker", "map_position"))
+  all_indivs <- setdiff(colnames(wide_dosage), c("marker", "position"))
 
   # Determine which of these columns correspond to parents.
   parent_cols <- intersect(parent_ids, all_indivs)
@@ -95,9 +95,9 @@ build_multiparental_dosage <- function(cross.results, pedigree) {
   # The remaining columns (non-parents) are:
   other_cols <- setdiff(all_indivs, parent_ids)
 
-  # Reorder the columns: marker, map_position, then parent's dosage columns, then the others.
+  # Reorder the columns: marker, position, then parent's dosage columns, then the others.
   wide_dosage_ordered <- wide_dosage %>%
-    select(marker, map_position, all_of(parent_cols), all_of(other_cols))
+    select(marker, position, all_of(parent_cols), all_of(other_cols))
 
   return(wide_dosage_ordered)
 }

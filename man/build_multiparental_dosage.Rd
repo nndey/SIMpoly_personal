@@ -8,14 +8,14 @@ build_multiparental_dosage(cross.results, pedigree)
 }
 \arguments{
 \item{cross.results}{A data frame containing cross results. It must include at least the following columns:
-\code{parent_1}, \code{parent_2}, \code{individual}, \code{marker}, \code{map_position}, and homolog columns starting with \code{"Homolog_"}.}
+\code{parent_1}, \code{parent_2}, \code{individual}, \code{marker}, \code{position}, and homolog columns starting with \code{"Homolog_"}.}
 
 \item{pedigree}{A data frame containing pedigree information with columns \code{parent_1}, \code{parent_2}, and \code{individual}.
 Individuals with \code{NA} for both \code{parent_1} and \code{parent_2} are considered parents.}
 }
 \value{
 A wide-format data frame with markers as rows and dosage values as columns.
-The first columns are \code{marker} and \code{map_position}, followed by the parental dosage columns, and then the remaining individuals.
+The first columns are \code{marker} and \code{position}, followed by the parental dosage columns, and then the remaining individuals.
 Missing dosage values are represented as \code{NA}.
 }
 \description{
