@@ -111,7 +111,7 @@ simulate_multiparental_data <- function(n.chr,
   P2s <- pedigree_biparental$parent_2[unique_crosses]
 
   # Generate correlated biparental cross memberships
-  correlated_sets <- generate_correlated_sets(
+  correlated_sets <- generate_correlated_sets_safe(
     n = nrow(wide_df),
     x = length(biparental_crosses),
     p = rep(p, length(biparental_crosses)),

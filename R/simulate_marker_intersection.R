@@ -64,6 +64,44 @@ generate_correlated_sets <- function(n = 1000,
   return(list(counts = counts, membership_matrix = membership_matrix))
 }
 
+#' @title Safe Correlated Set Membership Data
+#' @description Safer version of \code{generate_correlated_sets()} that avoids sampling errors when x = 1.
+#' @param n Integer. Total number of elements (e.g., SNPs).
+#' @param x Integer. Number of sets.
+#' @param p Numeric vector of length \code{x}. Marginal probability of inclusion.
+#' @param rho Numeric. Correlation between sets (overlap).
+#' @param multi_prob Probabilities for assigning "None" elements to 1–3 sets.
+#' @return A list: counts of set overlaps and logical membership matrix.
+#' @export
+generate_correlated_sets_safe <- function(n = 1000, x = 5, p = rep(0.3, x), rho = 0.5, multi_prob = c(0.5, 0.3, 0.2)) {
+  Sigma <- matrix(rho, nrow = x, ncol = x)
+  diag(Sigma) <- 1
+  X <- mvtnorm::rmvnorm(n, mean = rep(0, x), sigma = Sigma)
+  membership_matrix <- X < qnorm(p)
+  none_indices <- which(rowSums(membership_matrix) == 0)
+  for (i in none_indices) {
+    max_groups <- min(x, 3)
+    num_groups <- sample(1:max_groups, 1, prob = multi_prob[1:max_groups])
+    random_sets <- sample(1:x, num_groups)
+    membership_matrix[i, random_sets] <- TRUE
+  }
+  membership_df <- as.data.frame(membership_matrix)
+  colnames(membership_df) <- paste0("Set", 1:x)
+  all_combinations <- expand.grid(rep(list(c(FALSE, TRUE)), x))
+  counts <- sapply(1:nrow(all_combinations), function(i) {
+    sum(apply(membership_df, 1, function(row) all(row == unlist(all_combinations[i, ]))))
+  })
+  region_labels <- apply(all_combinations, 1, function(row) {
+    included_sets <- colnames(membership_df)[as.logical(row)]
+    if (length(included_sets) == 0) return("None")
+    paste(included_sets, collapse = "&")
+  })
+  names(counts) <- region_labels
+  counts <- counts[counts > 0]
+  return(list(counts = counts, membership_matrix = membership_matrix))
+}
+
+
 #' @title Plot Euler Diagram for Correlated Sets
 #' @description Plots an Euler diagram from the simulated correlated set membership data.
 #' @param results A list returned by `generate_correlated_sets()`, containing `counts` and `membership_matrix`.
