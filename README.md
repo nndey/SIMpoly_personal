@@ -28,7 +28,7 @@ To install SIMpoly from GitHub, use:
 
 ```r
 #devtools::install_github("mmollina/SIMpoly", dependencies=TRUE)
-devottols::install_github("nndey/SIMpoly_personal", dependencies=TRUE)
+devtools::install_github("nndey/SIMpoly_personal", dependencies=TRUE)
 ```
 
 ---
